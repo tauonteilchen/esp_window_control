@@ -10,11 +10,11 @@ data.indoor.temperature  = 0
 data.indoor.humidity = 0
 data.indoor.gpio = 1                 
 data.indoor.intervall = 5           
-data.indoor.last = 0
+data.indoor.last = 1
 
-data.window.open = 18              
-data.window.close =  90	             
-data.window.state = 0
+data.window.open = 15              
+data.window.close =  90            
+data.window.state = 1
 data.window.last_event = 0
 data.window.gpio = 2
 
@@ -54,18 +54,13 @@ function main(data)
 	
 	if data.window.state == 1 then
 		interval = data.window.open
-		--if data.room.min_temperature < data.indoor.temperature then
-		--	interval = data.window.open
-		--else
-		--	print("cold")
-		--end
 	else
 		interval = data.window.close
 	end
 	secondes_to_wait = (interval * 60) 
-	
+	ticks = (secondes_to_wait + data.window.last_event)
 	-- window event hanling
-	if  data.window.last_event + secondes_to_wait < now then
+	if  ticks < tmr.time() then
 		gpio.write(data.window.gpio, gpio.LOW)
 		tmr.delay(500)
 		gpio.write(data.window.gpio, gpio.HIGH)
